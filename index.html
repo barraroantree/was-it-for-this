@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Was It For This?</title>
+  <style>
+    /* ── Base reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Irish Times broadsheet palette ── */
+    :root {
+      --ink:        #1a1a1a;
+      --ink-light:  #3d3d3d;
+      --rule:       #b00020;   /* IT masthead red */
+      --rule-thin:  #ccc;
+      --cream:      #f5f0e8;
+      --white:      #fff;
+      --gold:       #9a7b2c;
+      --shadow:     rgba(0,0,0,.15);
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "Georgia", "Times New Roman", Times, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 1rem 4rem;
+    }
+
+    /* ── Masthead ── */
+    header {
+      width: 100%;
+      max-width: 780px;
+      border-bottom: 4px solid var(--rule);
+      text-align: center;
+      padding: 1.6rem 0 .8rem;
+      margin-bottom: .5rem;
+    }
+
+    header .dateline {
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: .6rem;
+    }
+
+    header h1 {
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -.02em;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    header .rule-gold {
+      height: 2px;
+      background: var(--gold);
+      margin: .55rem auto 0;
+      width: 60px;
+    }
+
+    header .tagline {
+      font-size: .8rem;
+      font-style: italic;
+      color: var(--ink-light);
+      margin-top: .45rem;
+    }
+
+    /* ── Main card ── */
+    main {
+      width: 100%;
+      max-width: 780px;
+      background: var(--white);
+      border: 1px solid var(--rule-thin);
+      box-shadow: 0 2px 12px var(--shadow);
+      padding: 2rem 2.5rem 2.5rem;
+      margin-top: 1.4rem;
+    }
+
+    .section-label {
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--rule);
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      margin-bottom: .7rem;
+    }
+
+    .editorial-deck {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.35;
+      border-top: 3px double var(--ink);
+      border-bottom: 1px solid var(--rule-thin);
+      padding: .85rem 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .intro-text {
+      font-size: .92rem;
+      line-height: 1.7;
+      color: var(--ink-light);
+      margin-bottom: 1.6rem;
+      border-left: 3px solid var(--rule);
+      padding-left: .9rem;
+    }
+
+    /* ── Input area ── */
+    .input-group {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-bottom: .5rem;
+    }
+
+    label[for="subject"] {
+      display: block;
+      font-size: .78rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      color: var(--ink-light);
+      margin-bottom: .4rem;
+    }
+
+    #subject {
+      flex: 1 1 260px;
+      font-family: inherit;
+      font-size: 1.05rem;
+      padding: .65rem .8rem;
+      border: 2px solid var(--ink);
+      background: var(--cream);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    #subject:focus { border-color: var(--rule); }
+
+    button#ask-btn {
+      flex: 0 0 auto;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: .65rem 1.4rem;
+      background: var(--rule);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+
+    button#ask-btn:hover  { background: #8c0019; }
+    button#ask-btn:active { transform: scale(.97); }
+
+    .hint {
+      font-size: .75rem;
+      color: var(--ink-light);
+      font-style: italic;
+      margin-top: .35rem;
+    }
+
+    /* ── Verdict area ── */
+    #verdict {
+      display: none;
+      margin-top: 2rem;
+      border-top: 4px solid var(--rule);
+      padding-top: 1.4rem;
+    }
+
+    #verdict.visible { display: block; }
+
+    #verdict-headline {
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: .6rem;
+    }
+
+    #verdict-headline.yes { color: var(--rule); }
+    #verdict-headline.no  { color: var(--ink); }
+
+    .verdict-byline {
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink-light);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--rule-thin);
+    }
+
+    #editorial-body p {
+      font-size: .96rem;
+      line-height: 1.75;
+      margin-bottom: 1rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    #editorial-body p:first-child::first-letter {
+      font-size: 3.4rem;
+      font-weight: 900;
+      float: left;
+      line-height: .8;
+      margin: .05em .12em -.05em 0;
+      color: var(--rule);
+    }
+
+    .yeats-block {
+      border-left: 4px solid var(--gold);
+      margin: 1.4rem 0;
+      padding: .8rem 1.1rem;
+      background: var(--cream);
+      font-style: italic;
+      font-size: .9rem;
+      line-height: 1.8;
+      color: var(--ink-light);
+    }
+
+    .yeats-block cite {
+      display: block;
+      font-style: normal;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: .6rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--gold);
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      max-width: 780px;
+      text-align: center;
+      font-size: .72rem;
+      color: var(--ink-light);
+      font-style: italic;
+      margin-top: 1.8rem;
+      padding-top: .8rem;
+      border-top: 1px solid var(--rule-thin);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <p class="dateline">Editorial — An Irishman's Diary of Sorrows</p>
+    <h1>Was It For This?</h1>
+    <div class="rule-gold"></div>
+    <p class="tagline">A solemn inquiry into the direction of the nation, in the spirit of W.B. Yeats</p>
+  </header>
+
+  <main>
+    <p class="section-label">The Great Reckoning</p>
+
+    <p class="editorial-deck">
+      Romantic Ireland's dead and gone — but was any of this worth dying for?
+    </p>
+
+    <p class="intro-text">
+      Enter a person, place, thing, or event below and receive an authoritative
+      editorial verdict on whether the men and women of 1916, the Fenians,
+      the Wild Geese, and all the generations of quiet Irish suffering truly
+      endured their trials so that <em>this</em> might come to pass.
+    </p>
+
+    <label for="subject">Enter a person, place, thing, or event:</label>
+    <div class="input-group">
+      <input
+        id="subject"
+        type="text"
+        placeholder="e.g. NAMA, a tax break for developers, seagulls…"
+        maxlength="120"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button id="ask-btn" type="button">Was it for this?</button>
+    </div>
+    <p class="hint">Try: "bankers' bonuses", "a ghost estate in Leitrim", "avocado toast", "the Taoiseach's golf trip"…</p>
+
+    <!-- Verdict panel -->
+    <section id="verdict" aria-live="polite">
+      <h2 id="verdict-headline"></h2>
+      <p class="verdict-byline">
+        The Editorial Board &nbsp;·&nbsp; <span id="verdict-date"></span>
+      </p>
+      <div id="editorial-body"></div>
+    </section>
+  </main>
+
+  <footer>
+    A parody inspired by the <em>Irish Times</em> editorial tradition and W.B. Yeats's
+    "September 1913". No harm intended to the memory of those who sacrificed everything.
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ── Yeats stanzas ── */
+      const YEATS = [
+        {
+          lines: [
+            "Was it for this the wild geese spread",
+            "The grey wing upon every tide;",
+            "For this that all that blood was shed,",
+            "For this Edward Fitzgerald died,",
+            "And Robert Emmet and Wolfe Tone,",
+            "All that delirium of the brave?"
+          ],
+          source: "W.B. Yeats, "September 1913""
+        },
+        {
+          lines: [
+            "Romantic Ireland's dead and gone,",
+            "It's with O'Leary in the grave."
+          ],
+          source: "W.B. Yeats, "September 1913""
+        },
+        {
+          lines: [
+            "Yet they were of a different kind,",
+            "The names that stilled your childish play,",
+            "They have gone about the world like wind,",
+            "But little time had they to pray",
+            "For whom the hangman's rope was spun,",
+            "And what, God help us, could they save?"
+          ],
+          source: "W.B. Yeats, "September 1913""
+        }
+      ];
+
+      /* ── Opening paragraphs (slot: {subject}) ── */
+      const OPENERS = [
+        "Was it for this? Was it for <strong>{subject}</strong> that so many lay down their lives in ditches, in prison cells, and on the windswept shores of a country that dared to dream? One pauses — truly pauses — to consider the enormity of the question.",
+        "The nation holds its breath. We must ask ourselves, as a people, whether the sacrifice of generations — the hunger strikers, the rebels of Easter, the Wild Geese blown to foreign shores — was ultimately destined to culminate in <strong>{subject}</strong>.",
+        "There are moments in the life of a republic when the citizenry is compelled to stop, to reflect, and to weep quietly into its tea. This is such a moment. For we are confronted, inescapably, with <strong>{subject}</strong>.",
+        "History is a ledger, and every entry must eventually be balanced. Today that ledger presents us with a line that would make Parnell himself fling the book across the room: <strong>{subject}</strong>. Was it for this?",
+        "One asks the question not in anger — never in anger — but in that particular species of Irish sorrow that sits somewhere between a sigh and a muffled howl: was it for <strong>{subject}</strong> that Theobald Wolfe Tone stood before a court and asked only for a soldier's death?"
+      ];
+
+      /* ── Middle paragraphs ── */
+      const MIDDLES = [
+        "The men of 1916 did not consult us before they acted. They acted on our behalf, on behalf of generations yet unborn, on behalf of a nation they could scarcely have imagined in its full, bewildering reality. Could they have imagined <strong>{subject}</strong>? We think not. We profoundly think not.",
+        "Consider the ordinary people of this island — the farmers of Connacht, the mill-workers of Belfast, the seamstresses of the Liberties — who endured centuries of dispossession and planted the seeds of independence in stony ground. They planted those seeds so that something might grow. Whether they intended <strong>{subject}</strong> to be that something is a question we shall be dining out on for years.",
+        "There is a particular quality to Irish embarrassment. It is not the hot, scarlet embarrassment of other nations. It is a cold, grey, Atlantic-facing mortification that settles on the shoulders like morning mist. <strong>{subject}</strong> has produced precisely that variety of embarrassment.",
+        "The economists, the bondholders, the men in good suits who flew in from Frankfurt and Washington — none of them were thinking about Pearse or Connolly. And yet here we are. Here, inescapably, magnificently, is <strong>{subject}</strong>.",
+        "Robert Emmet asked that his epitaph remain unwritten until Ireland had taken its place among the nations of the earth. One wonders whether, upon surveying <strong>{subject}</strong>, he might have requested a further extension.",
+        "We do not wish to be uncharitable. We are, as a newspaper, committed to fairness and to the considered weighing of all perspectives. And yet, when one weighs all perspectives on <strong>{subject}</strong>, one arrives — regrettably, inexorably — at the same conclusion."
+      ];
+
+      /* ── Closing paragraphs (YES / NO variants) ── */
+      const CLOSERS_YES = [
+        "And so — in a spirit of radical honesty that would shame a Fianna Fáil fundraiser — we must concede: yes. It was for this. The heroes of the republic could not have foreseen every consequence of their sacrifice, and <strong>{subject}</strong>, for all its peculiarities, is as Irish as a damp Bank Holiday. They would not have approved. But they would have understood.",
+        "It pains us to say it. The editorial board sat in silence for some moments before reaching consensus. But the verdict is unavoidable: <strong>{subject}</strong> is, in its own irreducible way, what the whole thing was for. Unruly, improbable, magnificently ourselves. Sláinte.",
+        "After careful deliberation — and one strong pot of tea — this newspaper concludes, cautiously and with numerous caveats, that yes: it was for this. <strong>{subject}</strong> is Ireland now. Romantic Ireland may be dead and gone, but whatever this is, it is stubbornly, defiantly ours."
+      ];
+
+      const CLOSERS_NO = [
+        "No. It was not for this. We state it plainly, without equivocation, in the declarative mood that the situation demands: <strong>{subject}</strong> is not what they died for. It is not what they were imprisoned for, not what they were exiled for, not what they hungered for in cold cells. Ireland deserves better, and it is the solemn duty of this newspaper to say so.",
+        "The answer, delivered with the full weight of this newspaper's editorial authority and a heavy heart, is: no. Definitively, historically, and — if we may use the word — cosmically, no. The republic was not established so that <strong>{subject}</strong> might be visited upon us. We must do better. We must be better. We owe them that much.",
+        "We emerge from our deliberations shaken but clear-eyed: it was not for this. <strong>{subject}</strong> represents a wrong turning, a deviation from the republican ideal, a betrayal — not dramatic and operatic, but quiet and administrative and somehow worse — of everything that was promised. Romantic Ireland's dead and gone. But it need not remain so.",
+        "This newspaper has seldom been moved to use the word 'disgrace' in an editorial. We use it now. <strong>{subject}</strong> is not what the Wild Geese flew the grey wing for. It is not what the hunger strikers endured. It is not what the poets wrote of in cold rooms. It is, to speak plainly: a disgrace. Was it for this? Lord, no."
+      ];
+
+      /* ── A handful of things that always get YES ── */
+      const ALWAYS_YES = [
+        "pint", "guinness", "craic", "hurling", "gaelic", "soda bread",
+        "tayto", "lyric fm", "john b. keane", "samuel beckett", "seamus heaney",
+        "the tidy towns", "brendan behan", "the so-called summer",
+        "a good moan", "the leaving cert"
+      ];
+
+      /* ── Helpers ── */
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function fill(template, subject) {
+        return template.replace(/\{subject\}/g, escapeHtml(subject));
+      }
+
+      function isAlwaysYes(subject) {
+        const s = subject.toLowerCase();
+        return ALWAYS_YES.some(k => s.includes(k));
+      }
+
+      function decide(subject) {
+        if (isAlwaysYes(subject)) return true;
+        /* ~30 % chance of YES for everything else */
+        return Math.random() < 0.3;
+      }
+
+      function formatDate() {
+        return new Date().toLocaleDateString("en-IE", {
+          weekday: "long", year: "numeric", month: "long", day: "numeric"
+        });
+      }
+
+      function buildEditorial(subject, yes) {
+        const opener   = fill(pick(OPENERS), subject);
+        const middle1  = fill(pick(MIDDLES), subject);
+        const pool     = MIDDLES.length > 1
+          ? MIDDLES.filter(m => m !== middle1)
+          : MIDDLES;
+        const middle2  = fill(pick(pool), subject);
+        const closer   = fill(pick(yes ? CLOSERS_YES : CLOSERS_NO), subject);
+        const stanza   = pick(YEATS);
+
+        return `
+          <p>${opener}</p>
+          <p>${middle1}</p>
+          <div class="yeats-block">
+            ${stanza.lines.map(l => l + "<br>").join("\n            ")}
+            <cite>${stanza.source}</cite>
+          </div>
+          <p>${middle2}</p>
+          <p>${closer}</p>
+        `;
+      }
+
+      /* ── Event handling ── */
+      const subjectInput = document.getElementById("subject");
+      const askBtn       = document.getElementById("ask-btn");
+      const verdictEl    = document.getElementById("verdict");
+      const headlineEl   = document.getElementById("verdict-headline");
+      const dateEl       = document.getElementById("verdict-date");
+      const bodyEl       = document.getElementById("editorial-body");
+
+      function render() {
+        const raw     = subjectInput.value.trim();
+        const subject = raw || "nothing in particular";
+
+        const yes = decide(subject);
+
+        headlineEl.textContent = yes
+          ? `Yes — it was for this.`
+          : `No — it was not for this.`;
+        headlineEl.className = yes ? "yes" : "no";
+
+        dateEl.textContent = formatDate();
+        bodyEl.innerHTML   = buildEditorial(subject, yes);
+
+        verdictEl.classList.add("visible");
+        verdictEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      askBtn.addEventListener("click", render);
+      subjectInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") render();
+      });
+    })();
+  </script>
+</body>
+</html>
