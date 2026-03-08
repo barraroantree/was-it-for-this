@@ -1,0 +1,26 @@
+{
+  "name": "was-it-for-this",
+  "version": "1.0.0",
+  "description": "Repo for was it for this app",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barraroantree/was-it-for-this.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/barraroantree/was-it-for-this/issues"
+  },
+  "homepage": "https://github.com/barraroantree/was-it-for-this#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "serve": "^14.2.6"
+  }
+}
